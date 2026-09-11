@@ -21,8 +21,6 @@ import {
   VisibilityOff,
   WorkspacePremium as CrownIcon,
   Login as LoginIcon,
-  Person as PersonIcon,
-  AdminPanelSettings as AdminIcon,
 } from '@mui/icons-material';
 import { Link as RouterLink, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -74,29 +72,6 @@ const LoginPage = () => {
     }
   };
 
-  // Demo Login Handler
-  const handleQuickDemoLogin = async (demoEmail, demoPass) => {
-    setEmail(demoEmail);
-    setPassword(demoPass);
-    setErrorMessage('');
-    setLoading(true);
-
-    try {
-      const loggedInUser = await login(demoEmail, demoPass);
-      showSuccess(`Demo Login successful as ${loggedInUser.name}!`);
-
-      if (loggedInUser.role === 'ADMIN') {
-        navigate(from === '/' ? '/admin' : from, { replace: true });
-      } else {
-        navigate(from, { replace: true });
-      }
-    } catch (err) {
-      setErrorMessage(err.message || 'Demo login failed.');
-      showError(err.message || 'Demo login failed.');
-    } finally {
-      setLoading(false);
-    }
-  };
 
   return (
     <Box
@@ -214,51 +189,6 @@ const LoginPage = () => {
             </Button>
           </form>
 
-          {/* Quick 1-Click Demo Buttons for Testing */}
-          <Box sx={{ mt: 3.5, pt: 2.5, borderTop: '1px dashed rgba(0,0,0,0.12)' }}>
-            <Typography variant="caption" sx={{ color: '#888', fontWeight: 700, display: 'block', textAlign: 'center', mb: 1.5 }}>
-              QUICK 1-CLICK DEMO ACCESS
-            </Typography>
-
-            <Stack spacing={1.2}>
-              <Button
-                variant="outlined"
-                fullWidth
-                size="small"
-                startIcon={<AdminIcon sx={{ color: '#1A1A1A' }} />}
-                onClick={() => handleQuickDemoLogin('ajairaja2004@gmail.com', 'Admin@123456')}
-                sx={{
-                  borderRadius: 2,
-                  borderColor: '#1A1A1A',
-                  color: '#1A1A1A',
-                  fontWeight: 700,
-                  fontSize: '0.8rem',
-                  '&:hover': {
-                    bgcolor: '#1A1A1A',
-                    color: '#FFF',
-                  },
-                }}
-              >
-                ⚡ Login as Admin (ajairaja2004@gmail.com)
-              </Button>
-
-              <Button
-                variant="outlined"
-                color="primary"
-                fullWidth
-                size="small"
-                startIcon={<PersonIcon />}
-                onClick={() => handleQuickDemoLogin('vikram@example.com', 'User@123456')}
-                sx={{
-                  borderRadius: 2,
-                  fontWeight: 700,
-                  fontSize: '0.8rem',
-                }}
-              >
-                ⚡ Login as Customer (vikram@example.com)
-              </Button>
-            </Stack>
-          </Box>
 
           <Box sx={{ textAlign: 'center', mt: 3 }}>
             <Typography variant="body2" sx={{ color: '#666' }}>
