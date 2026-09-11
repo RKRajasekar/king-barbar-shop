@@ -1,0 +1,103 @@
+// King Barbar Shop - Prisma Schema (PostgreSQL)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  CUSTOMER
+  ADMIN
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  COMPLETED
+  CANCELLED
+}
+
+model User {
+  id        Int       @id @default(autoincrement())
+  name      String
+  email     String    @unique
+  phone     String?
+  password  String
+  role      Role      @default(CUSTOMER)
+  avatar    String?
+  isActive  Boolean   @default(true)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  bookings  Booking[]
+
+  @@map("users")
+}
+
+model Service {
+  id          Int       @id @default(autoincrement())
+  name        String
+  category    String    @default("Haircut")
+  description String
+  price       Float
+  duration    Int       // in minutes
+  image       String?
+  isActive    Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  bookings    Booking[]
+
+  @@map("services")
+}
+
+model Hairstyle {
+  id                   Int      @id @default(autoincrement())
+  name                 String
+  category             String   // Trending, Classic, Fade, Undercut, Beard Styles, Premium Styles
+  description          String
+  image                String
+  recommendedServiceId Int?
+  createdAt            DateTime @default(now())
+
+  @@map("hairstyles")
+}
+
+model TimeSlot {
+  id        Int      @id @default(autoincrement())
+  startTime String
+  endTime   String
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+
+  @@map("time_slots")
+}
+
+model Booking {
+  id            Int           @id @default(autoincrement())
+  bookingNumber String        @unique
+  userId        Int
+  user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  serviceId     Int
+  service       Service       @relation(fields: [serviceId], references: [id])
+  date          String        // YYYY-MM-DD
+  timeSlot      String        // e.g. "10:00 AM"
+  notes         String?
+  status        BookingStatus @default(PENDING)
+  totalAmount   Float
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  @@map("bookings")
+}
+
+model BlockedDate {
+  id        Int      @id @default(autoincrement())
+  date      String   @unique // YYYY-MM-DD
+  reason    String?
+  createdAt DateTime @default(now())
+
+  @@map("blocked_dates")
+}
